@@ -7,35 +7,28 @@ import de.ativelox.leaguestats.util.Assets;
 import de.ativelox.leaguestats.constants.EDivision;
 
 /**
- *
+ * Provides a Wrapper for {@link Image} and {@link String}, where every
+ * {@link TierIcon} has a Tier and a Division represented by its Image and a
+ * description of its Tier and Division.
  *
  * @author Ativelox {@literal <ativelox.dev@web.de>}
  *
+ * @see ETier
+ * @see EDivision
  */
-public class TierIcon {
-
-	final Image icon;
-	final String description;
+public final class TierIcon {
 
 	/**
+	 * Gets the TierIcon by providing a {@link ETier} and a {@link EDivision}.
+	 * Every image is explicitly defined by its Tier and Division.
 	 * 
+	 * @param mTier
+	 *            The Tier of the TierIcon to get.
+	 * @param mDivision
+	 *            The Division of the TierIcon to get.
+	 * 
+	 * @return The TierIcon corresponding to the given Tier and Division.
 	 */
-	public TierIcon(final Image mIcon, final String mDescription) {
-		this.icon = mIcon;
-		this.description = mDescription;
-
-	}
-
-	public Image getIcon() {
-		return this.icon;
-
-	}
-
-	public String getDescription() {
-		return this.description;
-
-	}
-
 	public static TierIcon getTierIcon(final ETier mTier, final EDivision mDivision) {
 		if (mTier == ETier.BRONZE) {
 			if (mDivision == EDivision.I) {
@@ -131,6 +124,51 @@ public class TierIcon {
 
 		}
 		return Assets.PROVISIONAL;
+
+	}
+
+	/**
+	 * The description of this TierIcon.
+	 */
+	final String description;
+
+	/**
+	 * The image of this TierIcon.
+	 */
+	final Image icon;
+
+	/**
+	 * Creates a new TierIcon which conveniently wraps an Image and a String.
+	 * 
+	 * @param mIcon
+	 *            The image for this TierIcon
+	 *
+	 * @param mDescription
+	 *            The description for this TierIcon
+	 */
+	public TierIcon(final Image mIcon, final String mDescription) {
+		this.icon = mIcon;
+		this.description = mDescription;
+
+	}
+
+	/**
+	 * Gets the description for this TierIcon.
+	 * 
+	 * @return The description mentioned.
+	 */
+	public String getDescription() {
+		return this.description;
+
+	}
+
+	/**
+	 * Gets the Icon for this TierIcon.
+	 * 
+	 * @return The Icon mentioned.
+	 */
+	public Image getIcon() {
+		return this.icon;
 
 	}
 

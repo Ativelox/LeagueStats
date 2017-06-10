@@ -15,28 +15,99 @@ import de.ativelox.leaguestats.exceptions.InvalidURLException;
 import de.ativelox.leaguestats.exceptions.UnsupportedImageStyleException;
 
 /**
- *
+ * Provides methods to interact with the Data Dragon of LOL.
  *
  * @author Ativelox {@literal <ativelox.dev@web.de>}
+ * 
+ * @see DDragon#getImage(EImageType, EImageStyle, String)
  *
  */
-public class DDragon {
+public final class DDragon {
 
+	/**
+	 * The URL for abilities.
+	 */
+	private static final String ABILITIES_URL = "http://ddragon.leagueoflegends.com/cdn/6.24.1/img/spell/";
+
+	/**
+	 * The URL for loading arts of champions.
+	 */
+	private static final String ART_LOADING_URL = "http://ddragon.leagueoflegends.com/cdn/img/champion/loading/";
+
+	/**
+	 * The URL for full splash arts of champions.
+	 */
+	private static final String ART_SPLASH_URL = "http://ddragon.leagueoflegends.com/cdn/img/champion/splash/";
+
+	/**
+	 * The URL for square arts of champions.
+	 */
+	private static final String ART_SQUARE_URL = "http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/";
+
+	/**
+	 * The URL for items.
+	 */
+	private static final String ITEM_URL = "http://ddragon.leagueoflegends.com/cdn/6.24.1/img/item/";
+
+	/**
+	 * The URL for maps.
+	 */
+	private static final String MAP_URL = "http://ddragon.leagueoflegends.com/cdn/6.8.1/img/map/";
+
+	/**
+	 * The URL for masteries.
+	 */
+	private static final String MASTERY_URL = "http://ddragon.leagueoflegends.com/cdn/6.24.1/img/mastery/";
+
+	/**
+	 * The regex used to match the names/ids for the given relative image paths.
+	 */
 	private static final String NAME_ID_MATCHER = "^(.+)\\.png$";
 
-	private static final String ART_SPLASH_URL = "http://ddragon.leagueoflegends.com/cdn/img/champion/splash/";
-	private static final String ART_LOADING_URL = "http://ddragon.leagueoflegends.com/cdn/img/champion/loading/";
-	private static final String ART_SQUARE_URL = "http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/";
-	private static final String SUMMONER_SPELL_URL = "http://ddragon.leagueoflegends.com/cdn/6.24.1/img/spell/";
-	private static final String ABILITIES_URL = "http://ddragon.leagueoflegends.com/cdn/6.24.1/img/spell/";
+	/**
+	 * The URL for passive abilities.
+	 */
 	private static final String PASSIVE_ABILITIES_URL = "http://ddragon.leagueoflegends.com/cdn/6.24.1/img/passive/";
 
-	private static final String MASTERY_URL = "http://ddragon.leagueoflegends.com/cdn/6.24.1/img/mastery/";
-	private static final String RUNE_URL = "http://ddragon.leagueoflegends.com/cdn/6.24.1/img/rune/";
-	private static final String ITEM_URL = "http://ddragon.leagueoflegends.com/cdn/6.24.1/img/item/";
-	private static final String MAP_URL = "http://ddragon.leagueoflegends.com/cdn/6.8.1/img/map/";
+	/**
+	 * The URL for profile icons.
+	 */
 	private static final String PROFILE_ICON_URL = "http://ddragon.leagueoflegends.com/cdn/6.24.1/img/profileicon/";
 
+	/**
+	 * The URL for runes.
+	 */
+	private static final String RUNE_URL = "http://ddragon.leagueoflegends.com/cdn/6.24.1/img/rune/";
+
+	/**
+	 * The URL for summoner spells.
+	 */
+	private static final String SUMMONER_SPELL_URL = "http://ddragon.leagueoflegends.com/cdn/6.24.1/img/spell/";
+
+	/**
+	 * Gets an image from the Data Dragon from LOL.
+	 * 
+	 * @param mImageType
+	 *            The {@link EImageType} which to fetch
+	 * 
+	 * @param mImageStyle
+	 *            The {@link EImageStyle} which to fetch
+	 * 
+	 * @param mFullName
+	 *            The name/id of which to fetch the image from.
+	 * 
+	 * @return The Image for the given name/id.
+	 * 
+	 * @throws UnsupportedImageStyleException
+	 *             if the given {@link EImageStyle} wasn't supported by Riot.
+	 * 
+	 * @throws InvalidURLException
+	 *             if the built URL wasn't valid, e.g. there was no image to
+	 *             fetch with the given data.
+	 * 
+	 * @throws IOException
+	 *             if an IOException occured while trying to fetch the image.
+	 */
 	public static BufferedImage getImage(final EImageType mImageType, final EImageStyle mImageStyle,
 			final String mFullName) throws UnsupportedImageStyleException, InvalidURLException, IOException {
 
@@ -76,11 +147,11 @@ public class DDragon {
 			baseURL = SUMMONER_SPELL_URL;
 			extension = ".png";
 
-		} else if (mImageType == EImageType.ABILITIE) {
+		} else if (mImageType == EImageType.ABILITY) {
 			baseURL = ABILITIES_URL;
 			extension = ".png";
 
-		} else if (mImageType == EImageType.PASSIVEABILITIE) {
+		} else if (mImageType == EImageType.PASSIVEABILITY) {
 			baseURL = PASSIVE_ABILITIES_URL;
 			extension = ".png";
 
@@ -125,10 +196,10 @@ public class DDragon {
 	}
 
 	/**
-	 * 
+	 * Utility class, no initialization needed.
 	 */
 	private DDragon() {
-		// TODO Auto-generated constructor stub
+
 	}
 
 }

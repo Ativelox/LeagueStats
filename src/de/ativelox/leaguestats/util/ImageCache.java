@@ -23,21 +23,39 @@ import de.ativelox.leaguestats.exceptions.InvalidURLException;
 import de.ativelox.leaguestats.exceptions.UnsupportedImageStyleException;
 
 /**
- *
+ * Is able to cache {@link ECachedObject}s by using Serialization. Stores its
+ * data in {@link ImageCache#cache}.
  *
  * @author Ativelox {@literal <ativelox.dev@web.de>}
  *
  */
-public class ImageCache implements Serializable {
+public final class ImageCache implements Serializable {
 
+	/**
+	 * The filepath prefix for the cached Data.
+	 */
 	private static final String FILEPATH_SERIALIZATION_PRE = "cache/image_";
+
+	/**
+	 * The filepath suffix for the cached Data.
+	 */
 	private static final String FILEPATH_SERIALIZATION_SUFF = ".ser";
 
 	/**
-	 * 
+	 * The serial version UID.
 	 */
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Deserializes the current cache for the given {@link ECachedObject}. For
+	 * safety {@link ImageCache#hasSerializedCache(ECachedObject)} should be
+	 * called first, to secure such a cache exists.
+	 * 
+	 * @param mCachedObject
+	 *            The {@link ECachedObject} of which to get the cache.
+	 * 
+	 * @return The deserialized {@link ImageCache}.
+	 */
 	public static ImageCache deserialize(final ECachedObject mCachedObject) {
 		ImageCache cache = null;
 		try (final ObjectInputStream ois = new ObjectInputStream(
@@ -53,39 +71,109 @@ public class ImageCache implements Serializable {
 
 	}
 
+	/**
+	 * Checks whether a cache exists for the given {@link ECachedObject}.
+	 *
+	 * @param mCachedObject
+	 *            The {@link ECachedObject} of which to check whether a cache
+	 *            exists.
+	 * 
+	 * @return <tt>true</tt> if such a cache exists, <tt>false</tt> if not.
+	 */
 	public static boolean hasSerializedCache(final ECachedObject mCachedObject) {
 		final File cacheFile = new File(buildSerializationPath(mCachedObject));
 		return cacheFile.exists() && !cacheFile.isDirectory();
 	}
 
+	/**
+	 * Builds the path to the serialized file for a given {@link ECachedObject}.
+	 * 
+	 * @param mCachedObject
+	 *            The {@link ECachedObject} of which to get the file path.
+	 * 
+	 * @return the filepath mentioned.
+	 */
 	private static String buildSerializationPath(final ECachedObject mCachedObject) {
 		return FILEPATH_SERIALIZATION_PRE + mCachedObject + FILEPATH_SERIALIZATION_SUFF;
 
 	}
 
+	/**
+	 * Converts a given <b>byte[]</b> to a <b>Image</b>.
+	 * 
+	 * @param mByteArray
+	 *            The byte[] which to convert to an Image.
+	 * 
+	 * @return The image read from the byte[].
+	 */
+	private static Image byteArrayToImage(final byte[] mByteArray) {
+		return new ImageIcon(mByteArray).getImage();
+
+	}
+
+	/**
+	 * Converts a given <b>Image</b> to a <b>byte[]</b>
+	 * 
+	 * @param mImage
+	 *            The image which to convert to a byte[].
+	 * @return The byte[] mentioned or an empty byte[] if the image couldn't be
+	 *         written to a byte[].
+	 */
+	private static byte[] imageToByteArray(final BufferedImage mImage) {
+		try {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ImageIO.write(mImage, "png", baos);
+			return baos.toByteArray();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+
+		}
+		return new byte[] {};
+
+	}
+
+	/**
+	 * The Map used for serialization of images (byte[]).
+	 */
 	private final HashMap<Long, byte[]> cache;
 
+	/**
+	 * This caches cachedObject.
+	 */
 	private final ECachedObject cachedObject;
 
 	/**
-	 * 
+	 * Creates a new ImageCache for the given {@link ECachedObject}.
+	 * {@link ImageCache#serialize()} should be called after adding everything
+	 * to this ImageCache to save it.
 	 */
 	public ImageCache(final ECachedObject mCachedObject) {
 		File cacheDir = new File("cache/");
-		if(!cacheDir.exists()){
+		if (!cacheDir.exists()) {
 			cacheDir.mkdirs();
 		}
-		
+
 		this.cache = new HashMap<>();
 		this.cachedObject = mCachedObject;
 
 	}
 
+	/**
+	 * Clears this {@link ImageCache#cache}.
+	 */
 	public void clear() {
 		this.cache.clear();
 
 	}
 
+	/**
+	 * Gets {@link ImageCache#cache} which is internally used to managed this
+	 * cache. Also converts the <b>byte[]</b> to <b>Image</b> by calling
+	 * {@link ImageCache#byteArrayToImage(byte[])}.
+	 * 
+	 * @return the hashmap containing <b>Images</b>.
+	 */
 	public HashMap<Long, Image> getCache() {
 		HashMap<Long, Image> returnedCache = new HashMap<>();
 
@@ -97,16 +185,30 @@ public class ImageCache implements Serializable {
 		return returnedCache;
 	}
 
-	// public Image getImage(final String mImageName) {
-	// return this.cache.get(mImageName);
-	//
-	// }
-
-	public boolean hasImage(final String mImageName) {
-		return this.cache.containsKey(mImageName);
+	/**
+	 * Checks if the given ID is contained in this cache.
+	 * 
+	 * @param mImageID
+	 *            The ID mentioned.
+	 * 
+	 * @return <tt>true</tt> if the ID exists in this cache, <tt>false</tt>
+	 *         otherwise.
+	 */
+	public boolean hasImage(final long mImageID) {
+		return this.cache.containsKey(Long.valueOf(mImageID));
 
 	}
 
+	/**
+	 * Puts an Image in this cache with the given ID. Converts the fetched
+	 * <b>Image</b> to a <b>byte[]</b> by calling
+	 * {@link ImageCache#imageToByteArray(BufferedImage)}.
+	 * 
+	 * @param mID
+	 *            The id which to store in this cache.
+	 * @param mImageName
+	 *            The name with which to fetch the Image.
+	 */
 	public void putImage(final long mID, final String mImageName) {
 		EImageType imageType = EImageType.valueOf(this.cachedObject.toString());
 
@@ -127,8 +229,10 @@ public class ImageCache implements Serializable {
 		}
 	}
 
+	/**
+	 * Serializes this ImageCache by writing it as file.
+	 */
 	public void serialize() {
-
 		try (final ObjectOutputStream oos = new ObjectOutputStream(
 				new FileOutputStream(buildSerializationPath(this.cachedObject)))) {
 			oos.writeObject(this);
@@ -137,24 +241,5 @@ public class ImageCache implements Serializable {
 			e.printStackTrace();
 
 		}
-	}
-
-	private static byte[] imageToByteArray(final BufferedImage mImage) {
-		try {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			ImageIO.write(mImage, "png", baos);
-			return baos.toByteArray();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-
-		}
-		return new byte[] {};
-
-	}
-
-	private static Image byteArrayToImage(final byte[] mByteArray) {
-		return new ImageIcon(mByteArray).getImage();
-
 	}
 }

@@ -1,48 +1,73 @@
 package de.ativelox.leaguestats.model;
 
-import java.awt.Image;
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
-import de.ativelox.leaguestats.constants.EImageStyle;
-import de.ativelox.leaguestats.constants.EImageType;
 import de.ativelox.leaguestats.constants.ETeamAffiliation;
-import de.ativelox.leaguestats.exceptions.InvalidURLException;
-import de.ativelox.leaguestats.exceptions.UnsupportedImageStyleException;
-import de.ativelox.leaguestats.util.DDragon;
 import de.ativelox.leaguestats.util.Utils;
 import net.rithms.riot.api.RiotApi;
 import net.rithms.riot.api.RiotApiException;
 import net.rithms.riot.constant.PlatformId;
-import net.rithms.riot.dto.CurrentGame.BannedChampion;
 import net.rithms.riot.dto.CurrentGame.CurrentGameInfo;
 import net.rithms.riot.dto.CurrentGame.Participant;
-import net.rithms.riot.dto.Static.Champion;
 import net.rithms.riot.dto.Summoner.Summoner;
 
 /**
- *
+ * The current game for the given summoner. Is able to {@link Game#fetchData()}
+ * from {@link Game#api} and provides GETTERs for every needed information.
  *
  * @author Ativelox {@literal <ativelox.dev@web.de>}
  *
  */
-public class Game {
+public final class Game {
 
+	/**
+	 * The api used throughout for GET-requests.
+	 */
 	private final RiotApi api;
-	private final Summoner summoner;
 
-	private long id;
+	/**
+	 * The mode of this game.
+	 */
 	private String gameMode;
+
+	/**
+	 * The type of this game.
+	 */
 	private String gameType;
-	private int queueID;
-	private List<BannedChampion> bannedChampions;
+
+	/**
+	 * The id of this game.
+	 */
+	private long id;
+
+	/**
+	 * A List containing all the participants of this game, e.g. all the
+	 * summoners participating in this game.
+	 */
 	private List<Participant> participants;
 
 	/**
+	 * The queue id of this game.
+	 */
+	private int queueID;
+
+	/**
+	 * The summoner participating in the current match.
+	 */
+	private final Summoner summoner;
+
+	/**
+	 * Creates a new Game for a given summoner. Is able to
+	 * {@link Game#fetchData()} from {@link Game#api} and provides GETTERs for
+	 * every needed information.
 	 * 
+	 * @param mSummoner
+	 *            The summoner of which to get the data of the current game
+	 *            from.
+	 * 
+	 * @param mApi
+	 *            The api used for GET-requests.
 	 */
 	public Game(final Summoner mSummoner, final RiotApi mApi) {
 		this.api = mApi;
@@ -50,11 +75,18 @@ public class Game {
 
 	}
 
+	/**
+	 * Fetches all the data from Riots API provided for the current game.
+	 * 
+	 * @throws RiotApiException
+	 *             if any error code got sent from any GET-request on this API.
+	 * 
+	 * @see RiotApi#getCurrentGameInfo(PlatformId, long)
+	 */
 	public void fetchData() throws RiotApiException {
 		final CurrentGameInfo currentGame = this.api.getCurrentGameInfo(PlatformId.EUW, this.summoner.getId());
 
 		this.participants = currentGame.getParticipants();
-		this.bannedChampions = currentGame.getBannedChampions();
 		this.id = currentGame.getGameId();
 		this.gameMode = currentGame.getGameMode();
 		this.gameType = currentGame.getGameType();
@@ -62,6 +94,35 @@ public class Game {
 
 	}
 
+	/**
+	 * Gets the ID of this game.
+	 * 
+	 * @return the ID mentioned.
+	 */
+	public long getID() {
+		return this.id;
+
+	}
+
+	/**
+	 * Gets the mode of this game.
+	 * 
+	 * @return the mode mentioned.
+	 */
+	public String getMode() {
+		return this.gameMode;
+
+	}
+
+	/**
+	 * Gets all the participants of this game for a given
+	 * {@link ETeamAffiliation}.
+	 * 
+	 * @param mTeam
+	 *            The Team of which to get the participants from.
+	 * 
+	 * @return A list containing all the participants for the given Team.
+	 */
 	public List<Participant> getParticipants(final ETeamAffiliation mTeam) {
 		final List<Participant> resultParticipants = new LinkedList<>();
 
@@ -80,66 +141,22 @@ public class Game {
 	}
 
 	/**
-	 * This method should not be used, since its extremely GET heavy. Calls 6
-	 * GET requests, since there are 6 champs banned.
+	 * Gets the queue ID of this game.
 	 * 
-	 * @param mTeam
-	 * @return
-	 * @throws RiotApiException
-	 * 
+	 * @return the queue ID mentioned.
 	 */
-	@Deprecated
-	public Map<ChampionContainer, Integer> getBannedChampions(final ETeamAffiliation mTeam) throws RiotApiException {
-
-		final Map<ChampionContainer, Integer> teamBannedChamps = new HashMap<>();
-
-		for (final BannedChampion bannedChampion : this.bannedChampions) {
-			final ETeamAffiliation currentAffiliation = Utils.getTeamAffiliationByID(bannedChampion.getTeamId());
-
-			if (!(mTeam == currentAffiliation)) {
-				continue;
-
-			}
-			final int championID = (int) bannedChampion.getChampionId();
-			final Champion champion = this.api.getDataChampion(championID);
-
-			Image image = null;
-
-			try {
-				image = DDragon.getImage(EImageType.CHAMPION, EImageStyle.SQUARE, champion.getName());
-
-			} catch (UnsupportedImageStyleException | InvalidURLException | IOException e) {
-				// TODO: error handling, set default picture if an error
-				// occured.
-				// TODO: Remove Debug Print!
-				System.out.println("Couldn't fetch image for the following champion: " + champion.getName());
-
-			}
-			teamBannedChamps.put(new ChampionContainer(champion.getName(), image),
-					Integer.valueOf(bannedChampion.getPickTurn()));
-
-		}
-		return teamBannedChamps;
-
-	}
-
-	public String getMode() {
-		return this.gameMode;
-
-	}
-
-	public String getType() {
-		return this.gameType;
-
-	}
-
-	public long getID() {
-		return this.id;
-
-	}
-
 	public int getQueueID() {
 		return this.queueID;
+
+	}
+
+	/**
+	 * Gets the type of this game.
+	 * 
+	 * @return the type mentioned.
+	 */
+	public String getType() {
+		return this.gameType;
 
 	}
 

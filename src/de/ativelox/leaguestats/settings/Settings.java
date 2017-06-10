@@ -13,28 +13,49 @@ import javax.swing.JOptionPane;
 import net.rithms.riot.constant.Region;
 
 /**
- *
+ * Provides methods to {@link Settings#saveSettings(SettingsProvider)} and
+ * {@link Settings#loadSettings(SettingsProvider)} for a given
+ * {@link SettingsProvider} which has all the values.
  *
  * @author Ativelox {@literal <ativelox.dev@web.de>}
  *
  */
 public final class Settings {
 
+	/**
+	 * The header-comment of the properties file.
+	 */
 	private static final String FILE_COMMENT = "Configuration settings for LeagueStats.";
 
+	/**
+	 * The relative filepath for the properties file.
+	 */
 	private static final String FILEPATH = "config.ini";
 
+	/**
+	 * The properties for these settings.
+	 */
 	private final Properties properties;
 
 	/**
-	 * 
+	 * Provides methods to {@link Settings#saveSettings(SettingsProvider)} and
+	 * {@link Settings#loadSettings(SettingsProvider)} for a given
+	 * {@link SettingsProvider} which has all the values.
 	 */
 	public Settings() {
 		this.properties = new Properties();
 
 	}
 
-	public final void loadSettings(final SettingsProvider mProvider) {
+	/**
+	 * Loads the Settings of {@link Settings#FILEPATH} and loads them in the
+	 * given settingsProvider. If the file does not exists this method will ask
+	 * for specific user-input.
+	 * 
+	 * @param mProvider
+	 *            The provider into which to load the settings.
+	 */
+	public void loadSettings(final SettingsProvider mProvider) {
 
 		try (final FileInputStream fis = new FileInputStream(FILEPATH)) {
 			try {
@@ -61,7 +82,7 @@ public final class Settings {
 							Region.LAN.toString().toUpperCase(), Region.LAS.toString().toUpperCase(),
 							Region.NA.toString().toUpperCase(), Region.OCE.toString().toUpperCase(),
 							Region.RU.toString().toUpperCase(), Region.TR.toString().toUpperCase() },
-							Region.EUW.toString().toUpperCase())));
+					Region.EUW.toString().toUpperCase())));
 			mProvider.setSummonerName(JOptionPane.showInputDialog("Enter your Summonername."));
 			this.saveSettings(mProvider);
 			this.loadSettings(mProvider);
@@ -69,7 +90,15 @@ public final class Settings {
 		}
 	}
 
-	public final void saveSettings(final SettingsProvider mProvider) {
+	/**
+	 * Gets all the values given by the settings provider and saves them to
+	 * {@link Settings#FILEPATH}.
+	 * 
+	 * @param mProvider
+	 *            The settings provider of which to get the settings to be
+	 *            saved.
+	 */
+	public void saveSettings(final SettingsProvider mProvider) {
 
 		for (final Entry<String, String> entry : mProvider.getAllSettings().entrySet()) {
 			this.properties.put(entry.getKey(), entry.getValue());

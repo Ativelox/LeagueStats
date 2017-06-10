@@ -1,5 +1,5 @@
 /**
- * Provides logic for this project.
+ * Provides the main class for this project.
  *
  * @author Ativelox {@literal <ativelox.dev@web.de>}
  *

@@ -8,27 +8,74 @@ import javax.imageio.ImageIO;
 import de.ativelox.leaguestats.model.TierIcon;
 
 /**
- *
+ * Contains all the TierIcons in {@link Assets#TIER_PATH} and
+ * {@link Assets#BASE_PATH}.
  *
  * @author Ativelox {@literal <ativelox.dev@web.de>}
  *
  */
-public class Assets {
+public final class Assets {
 
-	public static final int HEIGHT = 200;
-	public static final int WIDTH = 200;
-
-	private final static String TIER_PATH = "res/tier-icons/";
-	private final static String BASE_PATH = "res/base-icons/";
-	private final static String FILE_EXTENSION = ".png";
-
+	/**
+	 * Every Bronze TierIcon
+	 */
 	public static TierIcon BRONZE_I, BRONZE_II, BRONZE_III, BRONZE_IV, BRONZE_V;
-	public static TierIcon SILVER_I, SILVER_II, SILVER_III, SILVER_IV, SILVER_V;
-	public static TierIcon GOLD_I, GOLD_II, GOLD_III, GOLD_IV, GOLD_V;
-	public static TierIcon PLATINUM_I, PLATINUM_II, PLATINUM_III, PLATINUM_IV, PLATINUM_V;
-	public static TierIcon DIAMOND_I, DIAMOND_II, DIAMOND_III, DIAMOND_IV, DIAMOND_V;
+
+	/**
+	 * Every TierIcon not associated with any division.
+	 */
 	public static TierIcon CHALLENGER, MASTER, PROVISIONAL;
 
+	/**
+	 * Every Diamond TierIcon.
+	 */
+	public static TierIcon DIAMOND_I, DIAMOND_II, DIAMOND_III, DIAMOND_IV, DIAMOND_V;
+
+	/**
+	 * Every Gold TierIcon.
+	 */
+	public static TierIcon GOLD_I, GOLD_II, GOLD_III, GOLD_IV, GOLD_V;
+
+	/**
+	 * The height of every icon.
+	 */
+	public static final int HEIGHT = 200;
+
+	/**
+	 * Every Platinum TierIcon.
+	 */
+	public static TierIcon PLATINUM_I, PLATINUM_II, PLATINUM_III, PLATINUM_IV, PLATINUM_V;
+
+	/**
+	 * Every Silver TierIcon.
+	 */
+	public static TierIcon SILVER_I, SILVER_II, SILVER_III, SILVER_IV, SILVER_V;
+
+	/**
+	 * The width of every icon.
+	 */
+	public static final int WIDTH = 200;
+
+	/**
+	 * The relative path for all the base icons
+	 */
+	private final static String BASE_PATH = "res/base-icons/";
+
+	/**
+	 * The file extension for all the images contained in the given file paths.
+	 */
+	private final static String FILE_EXTENSION = ".png";
+
+	/**
+	 * The relative path for all the tiers.
+	 */
+	private final static String TIER_PATH = "res/tier-icons/";
+
+	/**
+	 * Initiates the assets by loading every image in the paths
+	 * {@link Assets#TIER_PATH} and {@link Assets#BASE_PATH} and providing an
+	 * appropriate description.
+	 */
 	public static void init() {
 		try {
 			BRONZE_I = new TierIcon(ImageIO.read(new File(TIER_PATH + "bronze_i" + FILE_EXTENSION)), "Bronze I");
@@ -79,7 +126,7 @@ public class Assets {
 	}
 
 	/**
-	 * 
+	 * Utility class, no initialization needed
 	 */
 	private Assets() {
 

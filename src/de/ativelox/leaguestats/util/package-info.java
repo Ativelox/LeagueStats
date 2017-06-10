@@ -1,5 +1,5 @@
 /**
- *
+ * Provides Utility classes for this project.
  *
  * @author Ativelox {@literal <ativelox.dev@web.de>}
  *

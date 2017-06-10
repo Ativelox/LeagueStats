@@ -8,25 +8,36 @@ import java.awt.Image;
 import javax.swing.JPanel;
 
 /**
- *
+ * A {@link JPanel} which displays the keystone of the current summoner.
  *
  * @author Ativelox {@literal <ativelox.dev@web.de>}
  *
  */
-public class KeystonePanel extends JPanel {
+public final class KeystonePanel extends JPanel {
 
 	/**
-	 * 
+	 * The height of this component.
+	 */
+	private static final int COMPONENT_HEIGHT = Display.WINDOW_HEIGHT / 20 - (2 * DetailPanel.V_GAP);
+
+	/**
+	 * The width of this component.
+	 */
+	private static final int COMPONENT_WIDTH = Display.WINDOW_HEIGHT / 20 - DetailPanel.V_GAP;
+
+	/**
+	 * The serial version UID.
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private static final int COMPONENT_WIDTH = Display.WINDOW_HEIGHT / 20 - DetailPanel.V_GAP;
-	private static final int COMPONENT_HEIGHT = Display.WINDOW_HEIGHT / 20 - (2 * DetailPanel.V_GAP);
-
+	/**
+	 * The image of this summoners keystone.
+	 */
 	private Image keystoneImage;
 
 	/**
-	 * 
+	 * Creates a new {@link JPanel} which displays the keystone of the current
+	 * summoner.
 	 */
 	public KeystonePanel() {
 		super();
@@ -35,10 +46,20 @@ public class KeystonePanel extends JPanel {
 
 	}
 
+	/**
+	 * Sets the keystone image to the current keystone image of this summoner.
+	 * 
+	 * @param mKeystone
+	 *            The new keystone image.
+	 */
+	public void setKeystoneImage(final Image mKeystone) {
+		this.keystoneImage = mKeystone;
+
+	}
+
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		// this.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
 
 		if (this.keystoneImage == null) {
 			return;
@@ -46,11 +67,6 @@ public class KeystonePanel extends JPanel {
 		}
 
 		g.drawImage(this.keystoneImage, 0, 0, this.getWidth(), this.getHeight(), null);
-
 	}
 
-	public void setKeystoneImage(final Image mKeystone) {
-		this.keystoneImage = mKeystone;
-
-	}
 }

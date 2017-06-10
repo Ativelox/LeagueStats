@@ -9,27 +9,35 @@ import net.rithms.riot.api.RiotApi;
 import net.rithms.riot.api.RiotApiException;
 
 /**
- *
+ * The main class of this Project. Creates a new
+ * {@link Controller#Controller(String, RiotApi)} which handles further
+ * requests.
  *
  * @author Ativelox {@literal <ativelox.dev@web.de>}
  *
+ * @see LeagueStats#init()
  */
-public class LeagueStats {
-
-	public static final String TITLE = "LeagueStats";
-
-	public static void main(String[] args) throws RiotApiException {
-		LeagueStats.init();
-	}
+public final class LeagueStats {
 
 	/**
-	 * @throws RiotApiException
-	 * 
+	 * The title of this Frame.
 	 */
-	public LeagueStats() {
+	public static final String TITLE = "LeagueStats";
 
-	}
-
+	/**
+	 * Initializes this {@link LeagueStats} object. Furthermore calls
+	 * {@link ImageIDMapper#init(RiotApi)}, {@link Assets#init()},
+	 * {@link RankedQueueIDMapper#init()} so every data is accessible before
+	 * applying assets to the interface. Also creates a new
+	 * {@link Controller#Controller(String, RiotApi)} with the settings provided
+	 * by the config.ini.
+	 * 
+	 * @throws RiotApiException
+	 *             if any error code got sent from any GET-request on this API.
+	 * 
+	 * @see Controller#fetchData()
+	 * @see Controller#applyData()
+	 */
 	public static void init() throws RiotApiException {
 		final SettingsProvider provider = new SettingsProvider();
 		provider.initialize();
@@ -41,8 +49,29 @@ public class LeagueStats {
 		Assets.init();
 		RankedQueueIDMapper.init();
 
-		Controller controller = new Controller(provider.getSummonerName(), api);
+		final Controller controller = new Controller(provider.getSummonerName(), api);
 		controller.fetchData();
 		controller.applyData();
+	}
+
+	/**
+	 * The main method. Calls {@link LeagueStats#init()}.
+	 * 
+	 * @param args
+	 *            The command-line arguments (not supported).
+	 * 
+	 * @throws RiotApiException
+	 *             if any error code got sent from any GET-request on this API.
+	 */
+	public static void main(String[] args) throws RiotApiException {
+		LeagueStats.init();
+
+	}
+
+	/**
+	 * No initialization needed.
+	 */
+	private LeagueStats() {
+
 	}
 }

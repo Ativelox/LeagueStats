@@ -8,22 +8,27 @@ import javax.swing.JPanel;
 import de.ativelox.leaguestats.util.ScreenEssentials;
 
 /**
- *
+ * A {@link JPanel} used to display detailed information about the winrate of
+ * the current summoner.
  *
  * @author Ativelox {@literal <ativelox.dev@web.de>}
  *
  */
-public class WinratePanel extends JPanel {
+public final class WinratePanel extends JPanel {
 
 	/**
-	 * 
+	 * The serial version UID.
 	 */
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * The textpane used to display the winrate.
+	 */
 	private final ColorableTextPane winrateTextArea;
 
 	/**
-	 * 
+	 * Creates a new {@link JPanel} used to display detailed information about
+	 * the winrate of the current summoner.
 	 */
 	public WinratePanel() {
 		super();
@@ -39,6 +44,14 @@ public class WinratePanel extends JPanel {
 		this.add(this.winrateTextArea);
 	}
 
+	/**
+	 * Sets the given winrate to {@link WinratePanel#winrateTextArea}.
+	 * 
+	 * @param mWinrate
+	 *            The winrate to set.
+	 * 
+	 * @see WinratePanel#setWinrate(String, String, String)
+	 */
 	public void setWinrate(final String mWinrate) {
 		String winrate[] = mWinrate.split("/");
 		String winrateWins = winrate[0];
@@ -49,6 +62,17 @@ public class WinratePanel extends JPanel {
 
 	}
 
+	/**
+	 * Sets the given wins/losses: percentage in a colored way to
+	 * {@link KDAPanel#kdaTextArea}.
+	 * 
+	 * @param mWins
+	 *            The wins of the winrate.
+	 * @param mLosses
+	 *            The losses of the winrate.
+	 * @param mPercentage
+	 *            The percentage of the winrate.
+	 */
 	private void setWinrate(final String mWins, final String mLosses, final String mPercentage) {
 		Color percentageColor = ScreenEssentials.BLUE;
 		if (Integer.parseInt(mPercentage.split("%")[0]) < 50) {

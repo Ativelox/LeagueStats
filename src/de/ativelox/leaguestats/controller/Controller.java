@@ -9,6 +9,7 @@ import de.ativelox.leaguestats.constants.ETeamAffiliation;
 import de.ativelox.leaguestats.constants.ETier;
 import de.ativelox.leaguestats.model.Game;
 import de.ativelox.leaguestats.model.TierIcon;
+import de.ativelox.leaguestats.settings.SettingsProvider;
 import de.ativelox.leaguestats.util.ImageIDMapper;
 import de.ativelox.leaguestats.util.RankedQueueIDMapper;
 import de.ativelox.leaguestats.util.Utils;
@@ -23,19 +24,42 @@ import net.rithms.riot.dto.Stats.ChampionStats;
 import net.rithms.riot.dto.Stats.RankedStats;
 
 /**
- *
+ * The controller manages the communication between {@link Game} and
+ * {@link Display}.
  *
  * @author Ativelox {@literal <ativelox.dev@web.de>}
  *
  */
-public class Controller {
-
-	final Game game;
-	final RiotApi api;
-	final Display display;
+public final class Controller {
 
 	/**
+	 * The api given.
+	 */
+	private final RiotApi api;
+
+	/**
+	 * The display for this game to display the stats on.
+	 */
+	private final Display display;
+
+	/**
+	 * The game for the current summoner name.
+	 */
+	private final Game game;
+
+	/**
+	 * Initializes a new {@link Controller}. Creates a new
+	 * {@link Game#Game(net.rithms.riot.dto.Summoner.Summoner, RiotApi)} and a
+	 * new {@link Display#Display(String)}.
+	 * 
+	 * @param mSummonerName
+	 *            The summoner name of which to get the current ingame status.
+	 * 
+	 * @param mApi
+	 *            The api to use throughout this application.
+	 * 
 	 * @throws RiotApiException
+	 *             if any error code got sent from any GET-request on this API.
 	 * 
 	 */
 	public Controller(final String mSummonerName, final RiotApi mApi) throws RiotApiException {
@@ -45,11 +69,15 @@ public class Controller {
 
 	}
 
-	public void fetchData() throws RiotApiException {
-		this.game.fetchData();
-
-	}
-
+	/**
+	 * Applies all the data fetched to {@link Controller#display} and calls
+	 * {@link Display#init()} to show the UI.
+	 * 
+	 * @see Controller#applyData(ETeamAffiliation)
+	 * 
+	 * @throws RiotApiException
+	 *             if any error code got sent from any GET-request on this API.
+	 */
 	public void applyData() throws RiotApiException {
 		applyData(ETeamAffiliation.BLUE);
 		applyData(ETeamAffiliation.RED);
@@ -57,17 +85,41 @@ public class Controller {
 		this.display.init();
 	}
 
+	/**
+	 * Fetches all the data needed from {@link Controller#game}
+	 * 
+	 * @see Game#fetchData()
+	 * 
+	 * @throws RiotApiException
+	 *             if any error code got sent from any GET-request on this API.
+	 */
+	public void fetchData() throws RiotApiException {
+		this.game.fetchData();
+
+	}
+
+	/**
+	 * Applies all the data fetched to {@link Controller#display} for a given
+	 * {@link ETeamAffiliation}.
+	 * 
+	 * @param mTeam
+	 *            The Team for which to apply the data.
+	 * 
+	 * @throws RiotApiException
+	 *             if any error code got sent from any GET-request on this API.
+	 */
 	private void applyData(final ETeamAffiliation mTeam) throws RiotApiException {
 
-		final List<Participant> alliedParticipants = this.game.getParticipants(mTeam);
+		final List<Participant> participants = this.game.getParticipants(mTeam);
 
-		for (int i = 0; i < alliedParticipants.size(); i++) {
-			final Participant currentParticipant = alliedParticipants.get(i);
+		for (int i = 0; i < participants.size(); i++) {
+			final Participant currentParticipant = participants.get(i);
 
 			this.display.setSummonerName(mTeam, i + 1, currentParticipant.getSummonerName());
 			this.display.setChampionLoadingArt(mTeam, i + 1,
 					ImageIDMapper.CHAMPIONS.get(Long.valueOf(currentParticipant.getChampionId())));
 
+			// gets the keystone of the current participant
 			for (Mastery m : currentParticipant.getMasteries()) {
 				if (Utils.isKeystone(m.getMasteryId())) {
 					this.display.setKeystoneImage(mTeam, i + 1,
@@ -77,9 +129,14 @@ public class Controller {
 
 			// here goes the code which is GET heavy for the API, so the rate
 			// limits doesn't get exceeded.
+			if (SettingsProvider.IS_DEMO) {
+				continue;
+
+			}
 
 			final RankedStats stats = this.api.getRankedStats(currentParticipant.getSummonerId());
 
+			// gets the K/D/A and the Winrate of the current participant
 			for (final ChampionStats champStats : stats.getChampions()) {
 				if (champStats.getId() == currentParticipant.getChampionId()) {
 					final AggregatedStats aggStats = champStats.getStats();
@@ -107,13 +164,9 @@ public class Controller {
 				}
 			}
 
-//			if (SettingsProvider.IS_DEMO) {
-//				continue;
-//
-//			}
-
 			final List<League> currentLeague = this.api.getLeagueEntryBySummoner(currentParticipant.getSummonerId());
 
+			// gets the division/tier of the current participant
 			for (final League league : currentLeague) {
 				final ERankedQueue currentQueue = RankedQueueIDMapper.QUEUE
 						.get(Integer.valueOf(this.game.getQueueID()));
@@ -125,12 +178,15 @@ public class Controller {
 
 				}
 			}
-			
-			try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+
+			// do not exceed the rate limit if wanted to get all the data.
+			if (!SettingsProvider.IS_DEMO) {
+				try {
+					Thread.sleep(3000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 
