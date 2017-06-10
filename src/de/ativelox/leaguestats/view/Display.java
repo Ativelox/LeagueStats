@@ -55,12 +55,14 @@ public final class Display extends JFrame {
 
 	public void init() {
 		this.setUndecorated(true);
-		this.setBackground(Color.green);
+		this.setBackground(new Color(0, 0, 0, 0));
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		this.setSize(Display.WINDOW_WIDTH, Display.WINDOW_HEIGHT);
 		this.setLayout(new GridLayout(2, 5));
 		this.setLocation(Display.WINDOW_POSITION);
 		this.setResizable(false);
+		
+		JFrame.setDefaultLookAndFeelDecorated(true);
 
 		for (final SummonerPanel panel : this.alliedSummoners) {
 			this.add(panel);

@@ -8,6 +8,10 @@ import java.io.IOException;
 import java.util.Map.Entry;
 import java.util.Properties;
 
+import javax.swing.JOptionPane;
+
+import net.rithms.riot.constant.Region;
+
 /**
  *
  *
@@ -37,10 +41,10 @@ public final class Settings {
 				this.properties.load(fis);
 
 			} catch (final FileNotFoundException e) {
-				this.saveSettings(mProvider);
 
 				try (final FileInputStream anotherFis = new FileInputStream(FILEPATH)) {
 					this.properties.load(anotherFis);
+
 				}
 			}
 
@@ -49,7 +53,18 @@ public final class Settings {
 			}
 
 		} catch (final IOException e) {
-			e.printStackTrace();
+			mProvider.setApiKey(JOptionPane.showInputDialog("Enter your API-Key."));
+			mProvider.setRegion(Region.valueOf((String) JOptionPane.showInputDialog(null, "Select your region.",
+					"RegionSelection", JOptionPane.INFORMATION_MESSAGE, null,
+					new Object[] { Region.EUW.toString().toUpperCase(), Region.EUNE.toString().toUpperCase(),
+							Region.BR.toString().toUpperCase(), Region.KR.toString().toUpperCase(),
+							Region.LAN.toString().toUpperCase(), Region.LAS.toString().toUpperCase(),
+							Region.NA.toString().toUpperCase(), Region.OCE.toString().toUpperCase(),
+							Region.RU.toString().toUpperCase(), Region.TR.toString().toUpperCase() },
+							Region.EUW.toString().toUpperCase())));
+			mProvider.setSummonerName(JOptionPane.showInputDialog("Enter your Summonername."));
+			this.saveSettings(mProvider);
+			this.loadSettings(mProvider);
 
 		}
 	}
@@ -66,7 +81,7 @@ public final class Settings {
 
 		} catch (final IOException e) {
 			e.printStackTrace();
-			
+
 		}
 	}
 

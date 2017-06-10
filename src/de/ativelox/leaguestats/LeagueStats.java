@@ -7,7 +7,6 @@ import de.ativelox.leaguestats.util.ImageIDMapper;
 import de.ativelox.leaguestats.util.RankedQueueIDMapper;
 import net.rithms.riot.api.RiotApi;
 import net.rithms.riot.api.RiotApiException;
-import net.rithms.riot.constant.Region;
 
 /**
  *
@@ -36,13 +35,13 @@ public class LeagueStats {
 		provider.initialize();
 
 		final RiotApi api = new RiotApi(provider.getApiKey());
-		api.setRegion(Region.EUW);
+		api.setRegion(provider.getRegion());
 
 		ImageIDMapper.init(api);
 		Assets.init();
 		RankedQueueIDMapper.init();
 
-		Controller controller = new Controller("Gruzy", api);
+		Controller controller = new Controller(provider.getSummonerName(), api);
 		controller.fetchData();
 		controller.applyData();
 	}

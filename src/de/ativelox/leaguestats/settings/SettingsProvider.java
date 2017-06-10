@@ -3,6 +3,8 @@ package de.ativelox.leaguestats.settings;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.rithms.riot.constant.Region;
+
 /**
  *
  *
@@ -14,6 +16,8 @@ public final class SettingsProvider {
 	public static final String UNKNOWN_KEY_VALUE = "";
 
 	private static final String KEY_IDENTIFIER_API = "API_KEY";
+	private static final String KEY_IDENTIFIER_REGION = "REGION";
+	private static final String KEY_IDENTIFIER_SUMMONER_NAME = "SUMMONER_NAME";
 
 	/*
 	 * NOTE: this is only for demo purposes, since this is not needed in the
@@ -76,6 +80,32 @@ public final class SettingsProvider {
 			this.setSetting(key, mApiKey);
 
 		}
+	}
+
+	public void setRegion(final Region mRegion) {
+		if (mRegion != null) {
+			final String key = KEY_IDENTIFIER_REGION;
+			this.setSetting(key, mRegion.toString());
+
+		}
+
+	}
+
+	public Region getRegion() {
+		return Region.valueOf(this.getSetting(KEY_IDENTIFIER_REGION).toUpperCase());
+
+	}
+
+	public void setSummonerName(final String mSummonerName) {
+		if (mSummonerName != null) {
+			final String key = KEY_IDENTIFIER_SUMMONER_NAME;
+			this.setSetting(key, mSummonerName);
+		}
+	}
+	
+	public String getSummonerName(){
+		return this.getSetting(KEY_IDENTIFIER_SUMMONER_NAME);
+		
 	}
 
 	public final void setSetting(final String mKey, final String mValue) {

@@ -1,15 +1,18 @@
 package de.ativelox.leaguestats.view;
 
+import java.awt.AlphaComposite;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 
 import javax.swing.JPanel;
 
 import de.ativelox.leaguestats.model.TierIcon;
 import de.ativelox.leaguestats.util.Assets;
+import de.ativelox.leaguestats.util.ScreenEssentials;
 
 /**
  *
@@ -42,7 +45,7 @@ public final class SummonerPanel extends JPanel {
 		super();
 
 		this.setLayout(new BorderLayout());
-		this.setBackground(Color.red);
+		this.setBackground(new Color(0, 0, 0, 125));
 
 		this.detailPanel = new DetailPanel();
 		this.add(this.detailPanel, BorderLayout.PAGE_END);
@@ -53,13 +56,18 @@ public final class SummonerPanel extends JPanel {
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		
+		
+		Graphics2D g2d = (Graphics2D) g;
+		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f));
 		if(this.championLoadingArt != null){
-			g.drawImage(this.championLoadingArt, 0, 0, this.getWidth(), this.getHeight(), null);
-		}
+			g2d.drawImage(this.championLoadingArt, 0, 0, this.getWidth(), this.getHeight(), null);
+		}		
+
+		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 		
 		if(this.divisionTier != null){
-			g.setColor(new Color(24, 24, 24, 80));
-			g.drawImage(this.divisionTier.getIcon(), (this.getWidth() / 2) - (Assets.WIDTH / 2), 0, null);
+			g.setColor(ScreenEssentials.LOW_ALPHA_BLACK);
+			g.drawImage(this.divisionTier.getIcon(), 0, 0, Assets.WIDTH / 2, Assets.HEIGHT / 2, null);
 			g.fillRect(this.getWidth() / 3, 5, Assets.WIDTH - (this.getWidth() / 3), 20);
 			g.setColor(Color.WHITE);
 			g.setFont(new Font("Arial", Font.BOLD, 15));
@@ -67,7 +75,7 @@ public final class SummonerPanel extends JPanel {
 		}
 		
 		if(this.summonerName != null){
-			g.setColor(new Color(24, 24, 24, 80));
+			g.setColor(ScreenEssentials.LOW_ALPHA_BLACK);
 			g.fillRect(this.getWidth() / 10, this.getHeight() - (this.getHeight() / 6),
 					this.getWidth() - (this.getWidth() / 10), 20);
 			g.setColor(Color.WHITE);
@@ -76,6 +84,8 @@ public final class SummonerPanel extends JPanel {
 					this.getHeight() - (this.getHeight() / 6) + 16);
 			
 		}
+
+
 	}
 
 	public void setChampionLoadingArt(final Image mChampionLoadingArt) {

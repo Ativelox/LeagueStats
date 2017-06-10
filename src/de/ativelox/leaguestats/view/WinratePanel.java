@@ -1,9 +1,11 @@
 package de.ativelox.leaguestats.view;
 
+import java.awt.Color;
 import java.awt.FlowLayout;
 
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
+
+import de.ativelox.leaguestats.util.ScreenEssentials;
 
 /**
  *
@@ -18,7 +20,7 @@ public class WinratePanel extends JPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private final JTextArea winrateTextArea;
+	private final ColorableTextPane winrateTextArea;
 
 	/**
 	 * 
@@ -26,14 +28,39 @@ public class WinratePanel extends JPanel {
 	public WinratePanel() {
 		super();
 		this.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
-		
-		this.winrateTextArea = new JTextArea("Waiting...");
+
+		this.setBackground(ScreenEssentials.HIGH_ALPHA_BLACK);
+
+		this.winrateTextArea = new ColorableTextPane();
 		this.winrateTextArea.setEditable(false);
+
+		this.setWinrate("0W", "0L", "0%");
+
 		this.add(this.winrateTextArea);
 	}
 
 	public void setWinrate(final String mWinrate) {
-		this.winrateTextArea.setText(mWinrate);
+		String winrate[] = mWinrate.split("/");
+		String winrateWins = winrate[0];
+		String winrateLosses = winrate[1];
+		String winratePercentage = winrate[2];
+
+		this.setWinrate(winrateWins, winrateLosses, winratePercentage);
+
+	}
+
+	private void setWinrate(final String mWins, final String mLosses, final String mPercentage) {
+		Color percentageColor = ScreenEssentials.BLUE;
+		if (Integer.parseInt(mPercentage.split("%")[0]) < 50) {
+			percentageColor = ScreenEssentials.RED;
+		}
+
+		this.winrateTextArea.setText(null);
+		this.winrateTextArea.appendText(mWins, ScreenEssentials.BLUE);
+		this.winrateTextArea.appendText("/", Color.WHITE);
+		this.winrateTextArea.appendText(mLosses, ScreenEssentials.RED);
+		this.winrateTextArea.appendText(": ", Color.WHITE);
+		this.winrateTextArea.appendText(mPercentage, percentageColor);
 
 	}
 

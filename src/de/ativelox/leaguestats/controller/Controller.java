@@ -9,7 +9,6 @@ import de.ativelox.leaguestats.constants.ETeamAffiliation;
 import de.ativelox.leaguestats.constants.ETier;
 import de.ativelox.leaguestats.model.Game;
 import de.ativelox.leaguestats.model.TierIcon;
-import de.ativelox.leaguestats.settings.SettingsProvider;
 import de.ativelox.leaguestats.util.ImageIDMapper;
 import de.ativelox.leaguestats.util.RankedQueueIDMapper;
 import de.ativelox.leaguestats.util.Utils;
@@ -53,7 +52,7 @@ public class Controller {
 
 	public void applyData() throws RiotApiException {
 		applyData(ETeamAffiliation.BLUE);
-		// applyData(ETeamAffiliation.RED);
+		applyData(ETeamAffiliation.RED);
 
 		this.display.init();
 	}
@@ -90,7 +89,7 @@ public class Controller {
 					final long losses = aggStats.getTotalSessionsLost();
 
 					if (sum <= 0) {
-						this.display.setWinrate(mTeam, i + 1, "0W/0L: 0%");
+						this.display.setWinrate(mTeam, i + 1, "0W/0L/0%");
 						this.display.setKDA(mTeam, i + 1, "0/0/0");
 						break;
 					}
@@ -100,20 +99,18 @@ public class Controller {
 					final float avgAssists = (float) aggStats.getTotalAssists() / sum;
 
 					final String winrate = Math.round(((float) wins / sum) * 100f) + "%";
-					this.display.setWinrate(mTeam, i + 1, wins + "W/" + losses + "L: " + winrate);
+					this.display.setWinrate(mTeam, i + 1, wins + "W/" + losses + "L/" + winrate);
 					this.display.setKDA(mTeam, i + 1, String.format("%.1f/%.1f/%.1f", Float.valueOf(avgKills),
 							Float.valueOf(avgDeaths), Float.valueOf(avgAssists)));
 
 					break;
 				}
-				this.display.setWinrate(mTeam, i + 1, "0W/0L: 0%");
-				this.display.setKDA(mTeam, i + 1, "0/0/0");
 			}
 
-			if (SettingsProvider.IS_DEMO) {
-				continue;
-
-			}
+//			if (SettingsProvider.IS_DEMO) {
+//				continue;
+//
+//			}
 
 			final List<League> currentLeague = this.api.getLeagueEntryBySummoner(currentParticipant.getSummonerId());
 
@@ -127,6 +124,13 @@ public class Controller {
 									EDivision.valueOf(league.getEntries().get(0).getDivision())));
 
 				}
+			}
+			
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 

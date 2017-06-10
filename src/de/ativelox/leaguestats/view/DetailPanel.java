@@ -34,6 +34,8 @@ public class DetailPanel extends JPanel {
 		this.setLayout(new FlowLayout(FlowLayout.CENTER, H_GAP, V_GAP));
 		
 		this.setPreferredSize(new Dimension(this.getWidth(), Display.WINDOW_HEIGHT / 20));
+		
+		this.setOpaque(false);
 
 		this.winratePanel = new WinratePanel();
 		this.kdaPanel = new KDAPanel();
