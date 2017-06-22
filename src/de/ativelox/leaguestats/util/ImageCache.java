@@ -21,6 +21,9 @@ import de.ativelox.leaguestats.constants.EImageStyle;
 import de.ativelox.leaguestats.constants.EImageType;
 import de.ativelox.leaguestats.exceptions.InvalidURLException;
 import de.ativelox.leaguestats.exceptions.UnsupportedImageStyleException;
+import de.ativelox.leaguestats.logging.ELogLevel;
+import de.ativelox.leaguestats.logging.ILogger;
+import de.ativelox.leaguestats.logging.LoggerFactory;
 
 /**
  * Is able to cache {@link ECachedObject}s by using Serialization. Stores its
@@ -34,17 +37,22 @@ public final class ImageCache implements Serializable {
 	/**
 	 * The filepath prefix for the cached Data.
 	 */
-	private static final String FILEPATH_SERIALIZATION_PRE = "cache/image_";
+	public static final String FILEPATH_SERIALIZATION_PRE = "cache/image_";
 
 	/**
 	 * The filepath suffix for the cached Data.
 	 */
-	private static final String FILEPATH_SERIALIZATION_SUFF = ".ser";
+	public static final String FILEPATH_SERIALIZATION_SUFF = ".ser";
 
 	/**
 	 * The serial version UID.
 	 */
 	private static final long serialVersionUID = 1L;
+
+	/**
+	 * The logger used for logging.
+	 */
+	private final static ILogger logger = LoggerFactory.getLogger();
 
 	/**
 	 * Deserializes the current cache for the given {@link ECachedObject}. For
@@ -64,7 +72,8 @@ public final class ImageCache implements Serializable {
 			cache = (ImageCache) ois.readObject();
 
 		} catch (IOException | ClassNotFoundException e) {
-			e.printStackTrace();
+			logger.log("An error occured while trying to deserialize the cache for: " + mCachedObject.toString(),
+					ELogLevel.ERROR);
 
 		}
 		return cache;
@@ -126,7 +135,7 @@ public final class ImageCache implements Serializable {
 			return baos.toByteArray();
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.log("An error occured while trying to convert an image to a byte array...", ELogLevel.ERROR);
 
 		}
 		return new byte[] {};
@@ -222,10 +231,8 @@ public final class ImageCache implements Serializable {
 			this.cache.put(Long.valueOf(mID), imageToByteArray(image));
 
 		} catch (NumberFormatException | InvalidURLException | IOException | UnsupportedImageStyleException e) {
-			// TODO: Remove Debug Print!
-			// TODO: Remove Debug Print!
-			System.out.println(e);
-			System.out.println("An Error occured while trying to add the following image to the cache: " + mImageName);
+			logger.log("An error occured while trying to get the image for: " + mImageName, ELogLevel.ERROR);
+
 		}
 	}
 
@@ -238,7 +245,8 @@ public final class ImageCache implements Serializable {
 			oos.writeObject(this);
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.log("An error occured while trying to serialize the cache for: " + this.cachedObject.toString(),
+					ELogLevel.ERROR);
 
 		}
 	}

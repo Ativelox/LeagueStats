@@ -8,9 +8,11 @@ import java.io.IOException;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import javax.swing.JOptionPane;
-
-import net.rithms.riot.constant.Region;
+import de.ativelox.leaguestats.logging.ELogLevel;
+import de.ativelox.leaguestats.logging.ILogger;
+import de.ativelox.leaguestats.logging.LoggerFactory;
+import de.ativelox.leaguestats.logging.LoggerUtil;
+import de.ativelox.leaguestats.util.Utils;
 
 /**
  * Provides methods to {@link Settings#saveSettings(SettingsProvider)} and
@@ -38,12 +40,18 @@ public final class Settings {
 	private final Properties properties;
 
 	/**
+	 * The logger used for logging.
+	 */
+	private final ILogger logger;
+
+	/**
 	 * Provides methods to {@link Settings#saveSettings(SettingsProvider)} and
 	 * {@link Settings#loadSettings(SettingsProvider)} for a given
 	 * {@link SettingsProvider} which has all the values.
 	 */
 	public Settings() {
 		this.properties = new Properties();
+		this.logger = LoggerFactory.getLogger();
 
 	}
 
@@ -56,6 +64,7 @@ public final class Settings {
 	 *            The provider into which to load the settings.
 	 */
 	public void loadSettings(final SettingsProvider mProvider) {
+		this.logger.log("Loading Settings...", ELogLevel.INFO);
 
 		try (final FileInputStream fis = new FileInputStream(FILEPATH)) {
 			try {
@@ -74,16 +83,12 @@ public final class Settings {
 			}
 
 		} catch (final IOException e) {
-			mProvider.setApiKey(JOptionPane.showInputDialog("Enter your API-Key."));
-			mProvider.setRegion(Region.valueOf((String) JOptionPane.showInputDialog(null, "Select your region.",
-					"RegionSelection", JOptionPane.INFORMATION_MESSAGE, null,
-					new Object[] { Region.EUW.toString().toUpperCase(), Region.EUNE.toString().toUpperCase(),
-							Region.BR.toString().toUpperCase(), Region.KR.toString().toUpperCase(),
-							Region.LAN.toString().toUpperCase(), Region.LAS.toString().toUpperCase(),
-							Region.NA.toString().toUpperCase(), Region.OCE.toString().toUpperCase(),
-							Region.RU.toString().toUpperCase(), Region.TR.toString().toUpperCase() },
-					Region.EUW.toString().toUpperCase())));
-			mProvider.setSummonerName(JOptionPane.showInputDialog("Enter your Summonername."));
+			this.logger.log("Failed to create settings. Creating new Settings.", ELogLevel.ERROR);
+
+			mProvider.setApiKey(Utils.setApiKeyPopup());
+			mProvider.setRegion(Utils.setRegionPopup());	
+			mProvider.setSummonerName(Utils.setSummonerNamePopup());
+			
 			this.saveSettings(mProvider);
 			this.loadSettings(mProvider);
 
@@ -99,6 +104,7 @@ public final class Settings {
 	 *            saved.
 	 */
 	public void saveSettings(final SettingsProvider mProvider) {
+		this.logger.log("Saving Settings...", ELogLevel.INFO);
 
 		for (final Entry<String, String> entry : mProvider.getAllSettings().entrySet()) {
 			this.properties.put(entry.getKey(), entry.getValue());
@@ -109,7 +115,7 @@ public final class Settings {
 			this.properties.store(target, FILE_COMMENT);
 
 		} catch (final IOException e) {
-			e.printStackTrace();
+			this.logger.log(LoggerUtil.getStackTrace(e), ELogLevel.DEBUG);
 
 		}
 	}

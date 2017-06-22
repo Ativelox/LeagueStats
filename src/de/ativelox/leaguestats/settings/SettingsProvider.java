@@ -15,14 +15,6 @@ import net.rithms.riot.constant.Region;
 public final class SettingsProvider {
 
 	/**
-	 * Determines whether to not to exceed the rate limit or do so. If
-	 * <tt>true</tt> the rate limit won't be exceeded, if <tt>false</tt> this
-	 * application will revert to sleeps, so the rate limits won't get exceeded,
-	 * resulting in possible very long runtimes.
-	 */
-	public static boolean IS_DEMO = true;
-
-	/**
 	 * The unknown key value.
 	 */
 	public static final String UNKNOWN_KEY_VALUE = "";

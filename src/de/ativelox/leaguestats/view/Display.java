@@ -102,7 +102,7 @@ public final class Display extends JFrame {
 			this.add(panel);
 
 		}
-		this.setVisible(true);
+		this.setVisible(false);
 
 	}
 
@@ -130,7 +130,7 @@ public final class Display extends JFrame {
 	}
 
 	/**
-	 * Sets the tierIcon for a given {@link ETeamAffiliation}.
+	 * Sets the Solo/Duo tierIcon for a given {@link ETeamAffiliation}.
 	 * 
 	 * @param mTeam
 	 *            The Team for which to set the tierIcon.
@@ -141,12 +141,35 @@ public final class Display extends JFrame {
 	 * @param mTierIcon
 	 *            The tierIcon to set for the player.
 	 */
-	public void setDivisionTierImage(final ETeamAffiliation mTeam, final int mPlayerNumber, final TierIcon mTierIcon) {
+	public void setSoloDivisionTierImage(final ETeamAffiliation mTeam, final int mPlayerNumber, final TierIcon mTierIcon){
 		if (mTeam == ETeamAffiliation.BLUE) {
-			this.blueSummoners[mPlayerNumber - 1].setDivisionTierImage(mTierIcon);
+			this.blueSummoners[mPlayerNumber - 1].setSoloDivisionTierImage(mTierIcon);
 
 		} else if (mTeam == ETeamAffiliation.RED) {
-			this.redSummoners[mPlayerNumber - 1].setDivisionTierImage(mTierIcon);
+			this.redSummoners[mPlayerNumber - 1].setSoloDivisionTierImage(mTierIcon);
+
+		}
+		
+	}
+
+	/**
+	 * Sets the Flex tierIcon for a given {@link ETeamAffiliation}.
+	 * 
+	 * @param mTeam
+	 *            The Team for which to set the tierIcon.
+	 * 
+	 * @param mPlayerNumber
+	 *            The playerNumber for which to set the tierIcon.
+	 * 
+	 * @param mTierIcon
+	 *            The tierIcon to set for the player.
+	 */
+	public void setFlexDivisionTierImage(final ETeamAffiliation mTeam, final int mPlayerNumber, final TierIcon mTierIcon) {
+		if (mTeam == ETeamAffiliation.BLUE) {
+			this.blueSummoners[mPlayerNumber - 1].setFlexDivisionTierImage(mTierIcon);
+
+		} else if (mTeam == ETeamAffiliation.RED) {
+			this.redSummoners[mPlayerNumber - 1].setFlexDivisionTierImage(mTierIcon);
 
 		}
 	}
@@ -229,12 +252,12 @@ public final class Display extends JFrame {
 	 * @param mSummonerName
 	 *            The summonerName to set for the player.
 	 */
-	public void setSummonerName(final ETeamAffiliation mTeam, final int mPlayerNumber, final String mSummonerName) {
+	public void setSummonerName(final ETeamAffiliation mTeam, final int mPlayerNumber, final String mSummonerName, final boolean mIsPlayer) {
 		if (mTeam == ETeamAffiliation.BLUE) {
-			this.blueSummoners[mPlayerNumber - 1].setSummonerName(mSummonerName);
+			this.blueSummoners[mPlayerNumber - 1].setSummonerName(mSummonerName, mIsPlayer);
 
 		} else if (mTeam == ETeamAffiliation.RED) {
-			this.redSummoners[mPlayerNumber - 1].setSummonerName(mSummonerName);
+			this.redSummoners[mPlayerNumber - 1].setSummonerName(mSummonerName, mIsPlayer);
 
 		}
 	}

@@ -1,7 +1,6 @@
 package de.ativelox.leaguestats.view;
 
 import java.awt.Color;
-import java.awt.Font;
 
 import javax.swing.BorderFactory;
 import javax.swing.JTextPane;
@@ -10,6 +9,8 @@ import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
+
+import de.ativelox.leaguestats.util.Assets;
 
 /**
  * A {@link JTextPane} which provides
@@ -36,7 +37,7 @@ public final class ColorableTextPane extends JTextPane {
 
 		this.setOpaque(false);
 		this.setBorder(BorderFactory.createEmptyBorder());
-		this.setFont(new Font("Arial", Font.BOLD, 15));
+		this.setFont(Assets.STATS_FONT);
 		this.setFocusable(false);
 
 	}

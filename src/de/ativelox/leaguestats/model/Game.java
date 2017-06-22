@@ -83,8 +83,8 @@ public final class Game {
 	 * 
 	 * @see RiotApi#getCurrentGameInfo(PlatformId, long)
 	 */
-	public void fetchData() throws RiotApiException {
-		final CurrentGameInfo currentGame = this.api.getCurrentGameInfo(PlatformId.EUW, this.summoner.getId());
+	public void fetchData(final PlatformId mPlatformID) throws RiotApiException {
+		final CurrentGameInfo currentGame = this.api.getCurrentGameInfo(mPlatformID, this.summoner.getId());
 
 		this.participants = currentGame.getParticipants();
 		this.id = currentGame.getGameId();

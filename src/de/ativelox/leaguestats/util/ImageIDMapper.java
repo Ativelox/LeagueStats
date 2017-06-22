@@ -1,10 +1,16 @@
 package de.ativelox.leaguestats.util;
 
 import java.awt.Image;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import de.ativelox.leaguestats.constants.ECachedObject;
+import de.ativelox.leaguestats.logging.ELogLevel;
+import de.ativelox.leaguestats.logging.ILogger;
+import de.ativelox.leaguestats.logging.LoggerFactory;
 import net.rithms.riot.api.RiotApi;
 import net.rithms.riot.api.RiotApiException;
 import net.rithms.riot.constant.staticdata.ChampData;
@@ -63,6 +69,11 @@ public final class ImageIDMapper {
 	public static Map<Long, Image> SUMMONER_SPELLS;
 
 	/**
+	 * The logger used for logging.
+	 */
+	private final static ILogger logger = LoggerFactory.getLogger();
+
+	/**
 	 * Creates a new Cache for all the champion images and serializes it.
 	 * 
 	 * @param mChampionList
@@ -71,6 +82,7 @@ public final class ImageIDMapper {
 	 *            The cache which to use for serialization.
 	 */
 	public static void createChampionCache(final ChampionList mChampionList, final ImageCache mCache) {
+		logger.log("Creating cache for champion images...", ELogLevel.INFO);
 
 		for (final Entry<String, Champion> entry : mChampionList.getData().entrySet()) {
 			mCache.putImage(entry.getValue().getId(), entry.getValue().getImage().getFull());
@@ -88,6 +100,7 @@ public final class ImageIDMapper {
 	 *            The cache which to use for serialization.
 	 */
 	public static void createItemCache(final ItemList mItemList, final ImageCache mCache) {
+		logger.log("Creating cache for item images...", ELogLevel.INFO);
 
 		for (final Entry<String, Item> entry : mItemList.getData().entrySet()) {
 			mCache.putImage(entry.getValue().getId(), entry.getValue().getImage().getFull());
@@ -105,6 +118,7 @@ public final class ImageIDMapper {
 	 *            The cache which to use for serialization.
 	 */
 	public static void createMasteryCache(final MasteryList mMasteryList, final ImageCache mCache) {
+		logger.log("Creating cache for mastery images...", ELogLevel.INFO);
 
 		for (final Entry<String, Mastery> entry : mMasteryList.getData().entrySet()) {
 			mCache.putImage(entry.getValue().getId(), entry.getValue().getImage().getFull());
@@ -122,6 +136,7 @@ public final class ImageIDMapper {
 	 *            The cache which to use for serialization.
 	 */
 	public static void createRuneCache(final RuneList mRuneList, final ImageCache mCache) {
+		logger.log("Creating cache for rune images...", ELogLevel.INFO);
 
 		for (final Entry<String, Rune> entry : mRuneList.getData().entrySet()) {
 			mCache.putImage(entry.getValue().getId(), entry.getValue().getImage().getFull());
@@ -139,6 +154,7 @@ public final class ImageIDMapper {
 	 *            The cache which to use for serialization.
 	 */
 	public static void createSummonerSpellCache(final SummonerSpellList mSummonerSpellList, final ImageCache mCache) {
+		logger.log("Creating cache for summoner spell images...", ELogLevel.INFO);
 
 		for (final Entry<String, SummonerSpell> entry : mSummonerSpellList.getData().entrySet()) {
 			mCache.putImage(entry.getValue().getId(), entry.getValue().getImage().getFull());
@@ -186,11 +202,43 @@ public final class ImageIDMapper {
 
 		}
 
+		logger.log("Getting image data from the champion cache...", ELogLevel.INFO);
 		ImageIDMapper.CHAMPIONS = ImageCache.deserialize(ECachedObject.CHAMPION).getCache();
+
+		logger.log("Getting image data from the mastery cache...", ELogLevel.INFO);
 		ImageIDMapper.MASTERIES = ImageCache.deserialize(ECachedObject.MASTERY).getCache();
+
+		logger.log("Getting image data from the rune cache...", ELogLevel.INFO);
 		ImageIDMapper.RUNES = ImageCache.deserialize(ECachedObject.RUNE).getCache();
+
+		logger.log("Getting image data from the summoner spell cache...", ELogLevel.INFO);
 		ImageIDMapper.SUMMONER_SPELLS = ImageCache.deserialize(ECachedObject.SUMMONERSPELL).getCache();
+
+		logger.log("Getting image data from the item cache...", ELogLevel.INFO);
 		ImageIDMapper.ITEMS = ImageCache.deserialize(ECachedObject.ITEM).getCache();
+	}
+
+	public static void deleteCaches() {
+		try {
+			Files.delete(Paths.get(ImageCache.FILEPATH_SERIALIZATION_PRE + ECachedObject.CHAMPION
+					+ ImageCache.FILEPATH_SERIALIZATION_SUFF));
+
+			Files.delete(Paths.get(ImageCache.FILEPATH_SERIALIZATION_PRE + ECachedObject.ITEM
+					+ ImageCache.FILEPATH_SERIALIZATION_SUFF));
+
+			Files.delete(Paths.get(ImageCache.FILEPATH_SERIALIZATION_PRE + ECachedObject.MASTERY
+					+ ImageCache.FILEPATH_SERIALIZATION_SUFF));
+
+			Files.delete(Paths.get(ImageCache.FILEPATH_SERIALIZATION_PRE + ECachedObject.RUNE
+					+ ImageCache.FILEPATH_SERIALIZATION_SUFF));
+
+			Files.delete(Paths.get(ImageCache.FILEPATH_SERIALIZATION_PRE + ECachedObject.SUMMONERSPELL
+					+ ImageCache.FILEPATH_SERIALIZATION_SUFF));
+			
+		} catch (IOException e) {
+			logger.log("Error occured while trying to delete caches...", ELogLevel.ERROR);
+
+		}
 	}
 
 	/**

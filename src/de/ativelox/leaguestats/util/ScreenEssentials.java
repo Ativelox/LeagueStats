@@ -20,6 +20,11 @@ public final class ScreenEssentials {
 	 * The Color green used throughout this project.
 	 */
 	public static final Color GREEN = new Color(0, 255, 0);
+	
+	/**
+	 * The Color gold used throughout this project.
+	 */
+	public static final Color GOLD = new Color(218, 165, 32);
 
 	/**
 	 * A black color with a high alpha value, being not very transparent.
@@ -35,6 +40,11 @@ public final class ScreenEssentials {
 	 * The Color red used throughout this project.
 	 */
 	public static final Color RED = new Color(255, 0, 0);
+	
+	/**
+	 * The Color red used while logging errors.
+	 */
+	public static final Color LOG_ERROR_RED = new Color(180, 0, 0);
 
 	/**
 	 * The screen height of the primary monitor.

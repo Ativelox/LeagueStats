@@ -3,7 +3,6 @@ package de.ativelox.leaguestats.view;
 import java.awt.AlphaComposite;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -39,9 +38,19 @@ public final class SummonerPanel extends JPanel {
 	private DetailPanel detailPanel;
 
 	/**
-	 * The TierIcon of the current summoner.
+	 * The flex TierIcon of the current summoner.
 	 */
-	private TierIcon divisionTier;
+	private TierIcon flexDivisionTier;
+
+	/**
+	 * Determining whether this summoner is the current player.
+	 */
+	private boolean isPlayer;
+
+	/**
+	 * The solo TierIcon of the current summoner.
+	 */
+	private TierIcon soloDivisionTier;
 
 	/**
 	 * The summoner icon of the current summoner.
@@ -81,13 +90,24 @@ public final class SummonerPanel extends JPanel {
 	}
 
 	/**
-	 * Sets the division tier for {@link SummonerPanel}.
+	 * Sets the solo division tier for {@link SummonerPanel}.
 	 * 
 	 * @param mDivisionTier
 	 *            The division tier to set.
 	 */
-	public void setDivisionTierImage(final TierIcon mDivisionTier) {
-		this.divisionTier = mDivisionTier;
+	public void setSoloDivisionTierImage(final TierIcon mDivisionTier) {
+		this.soloDivisionTier = mDivisionTier;
+
+	}
+
+	/**
+	 * Sets the flex division tier for {@link SummonerPanel}.
+	 * 
+	 * @param mDivisionTier
+	 *            The division tier to set.
+	 */
+	public void setFlexDivisionTierImage(final TierIcon mDivisionTier) {
+		this.flexDivisionTier = mDivisionTier;
 
 	}
 
@@ -130,8 +150,9 @@ public final class SummonerPanel extends JPanel {
 	 * @param mSummonerName
 	 *            The summoner name to set.
 	 */
-	public void setSummonerName(final String mSummonerName) {
+	public void setSummonerName(final String mSummonerName, final boolean mIsPlayer) {
 		this.summonerName = mSummonerName;
+		this.isPlayer = mIsPlayer;
 
 	}
 
@@ -163,23 +184,47 @@ public final class SummonerPanel extends JPanel {
 		// resets the alpha component of these graphics to an transparency of 0%
 		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 
-		// prints the division icon and its description onto this panel
-		if (this.divisionTier != null) {
+		// prints the flex division icon and its description onto this panel
+		if (this.flexDivisionTier != null) {
 			g.setColor(ScreenEssentials.LOW_ALPHA_BLACK);
-			g.drawImage(this.divisionTier.getIcon(), 0, 0, Assets.WIDTH / 2, Assets.HEIGHT / 2, null);
-			g.fillRect(this.getWidth() / 3, 5, Assets.WIDTH - (this.getWidth() / 3), 20);
+			g.drawImage(this.flexDivisionTier.getIcon(), this.getWidth() - (Assets.WIDTH / 2), 0, Assets.WIDTH / 2,
+					Assets.HEIGHT / 2, null);
+			g.fillRect(this.getWidth() - (Assets.WIDTH / 2) + 10, Assets.HEIGHT / 2, Assets.WIDTH / 2 - 20, 20);
+			g.fillRect(this.getWidth() - (Assets.WIDTH / 2) + 10, 0, Assets.WIDTH / 2 - 20, 20);
 			g.setColor(Color.WHITE);
-			g.setFont(new Font("Arial", Font.BOLD, 15));
-			g.drawString(this.divisionTier.getDescription(), this.getWidth() / 3 + this.getWidth() / 30, 20);
+			g.setFont(Assets.NAME_FONT);
+			g.drawString(this.flexDivisionTier.getDescription(), this.getWidth() - (Assets.WIDTH / 2) + 15,
+					(Assets.HEIGHT / 2) + 18);
+			g.setFont(Assets.SMALL_NAME_FONT);
+			g.drawString("Flex", this.getWidth() - (Assets.WIDTH / 2) + 35, 18);
+
+		}
+
+		if (this.soloDivisionTier != null) {
+			g.setColor(ScreenEssentials.LOW_ALPHA_BLACK);
+			g.drawImage(this.soloDivisionTier.getIcon(), 0, 0, Assets.WIDTH / 2, Assets.HEIGHT / 2, null);
+			g.fillRect(10, Assets.HEIGHT / 2, Assets.WIDTH / 2 - 20, 20);
+			g.fillRect(10, 0, Assets.WIDTH / 2 - 20, 20);
+			g.setColor(Color.WHITE);
+			g.setFont(Assets.NAME_FONT);
+			g.drawString(this.soloDivisionTier.getDescription(), 15, (Assets.HEIGHT / 2) + 18);
+			g.setFont(Assets.SMALL_NAME_FONT);
+			g.drawString("Solo/Duo", 22, 18);
+
 		}
 
 		// prints the summoner name onto this panel.
 		if (this.summonerName != null) {
 			g.setColor(ScreenEssentials.LOW_ALPHA_BLACK);
 			g.fillRect(this.getWidth() / 10, this.getHeight() - (this.getHeight() / 6),
-					this.getWidth() - (this.getWidth() / 10), 20);
+					this.getWidth() - (2 * (this.getWidth() / 10)), 20);
 			g.setColor(Color.WHITE);
-			g.setFont(new Font("Arial", Font.BOLD, 15));
+
+			if (this.isPlayer) {
+				g.setColor(ScreenEssentials.GOLD);
+			}
+
+			g.setFont(Assets.NAME_FONT);
 			g.drawString(this.summonerName, this.getWidth() / 10 + this.getWidth() / 30,
 					this.getHeight() - (this.getHeight() / 6) + 16);
 
